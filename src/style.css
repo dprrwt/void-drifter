@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Playfair+Display:wght@400;500&display=swap');
+
+:root {
+  --color-sky: #f7d9aa;
+  --color-text: #594034;
+  --color-text-light: #8c7a6b;
+  --color-accent: #f25346;
+  --color-energy: #68c3c0;
+  --color-cream: #fef9f3;
+  --color-warm: #e8a87c;
+}
 
 * {
   margin: 0;
@@ -8,9 +18,9 @@
 
 body {
   overflow: hidden;
-  background: #0a0a15;
-  font-family: 'Orbitron', 'Segoe UI', sans-serif;
-  color: white;
+  background: var(--color-sky);
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--color-text);
 }
 
 #app {
@@ -32,16 +42,65 @@ canvas {
   pointer-events: none;
 }
 
+/* Header - Title */
+#header {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  transition: all 0.5s ease;
+}
+
+#header.playing {
+  top: 15px;
+  transform: translateX(-50%) scale(0.7);
+  opacity: 0.8;
+}
+
+#header h1 {
+  font-family: 'Poiret One', cursive;
+  font-weight: 400;
+  line-height: 1;
+}
+
+#header .the {
+  font-size: clamp(14px, 3vw, 18px);
+  display: block;
+  letter-spacing: 3px;
+  color: var(--color-text-light);
+  margin-bottom: 5px;
+}
+
+#header .title {
+  font-size: clamp(48px, 10vw, 80px);
+  letter-spacing: 8px;
+  color: var(--color-text);
+}
+
+#header .tagline {
+  font-size: clamp(12px, 2.5vw, 16px);
+  color: var(--color-accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  font-family: 'Playfair Display', serif;
+}
+
 /* Score Panel */
 #score-panel {
   position: absolute;
-  top: 20px;
+  top: 120px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 40px;
+  gap: 50px;
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#score-panel.visible {
+  opacity: 1;
 }
 
 .stat {
@@ -52,45 +111,52 @@ canvas {
 
 .stat .label {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-light);
   letter-spacing: 3px;
-  margin-bottom: 5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
-.stat span:not(.label) {
+.stat .circle {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-text-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.stat #distance {
   font-size: 28px;
-  font-weight: bold;
-  color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  font-weight: 500;
+  color: var(--color-text);
+  font-family: 'Poiret One', cursive;
+  letter-spacing: 2px;
 }
 
 /* Energy Bar */
 #energy-bar {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  max-width: 80%;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  width: 80px;
+  height: 6px;
+  background: rgba(89, 64, 52, 0.2);
+  border-radius: 3px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  opacity: 0;
-  transition: opacity 0.5s;
+  margin-top: 5px;
 }
 
 #energy-fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #00ff88, #00ffaa);
-  border-radius: 6px;
-  transition: width 0.3s, background 0.3s;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+  background: var(--color-energy);
+  border-radius: 3px;
+  transition: width 0.3s ease, background 0.3s ease;
 }
 
-/* Start Screen */
+/* Screens */
 #start-screen,
 #gameover-screen {
   position: absolute;
@@ -99,107 +165,164 @@ canvas {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at center, rgba(10, 10, 21, 0.8) 0%, rgba(10, 10, 21, 0.95) 100%);
   pointer-events: all;
 }
 
-#start-screen h1,
-#gameover-screen h1 {
-  font-size: clamp(36px, 10vw, 72px);
-  font-weight: bold;
-  letter-spacing: 10px;
+.content {
+  text-align: center;
+  padding: 40px 60px;
+  background: rgba(254, 249, 243, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(89, 64, 52, 0.15);
+}
+
+.content h2 {
+  font-family: 'Poiret One', cursive;
+  font-size: clamp(28px, 6vw, 42px);
+  font-weight: 400;
+  color: var(--color-text);
   margin-bottom: 20px;
-  background: linear-gradient(135deg, #00ffff, #ff00ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-  animation: glow 2s ease-in-out infinite alternate;
+  letter-spacing: 4px;
 }
 
-@keyframes glow {
-  from {
-    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
-  }
-  to {
-    filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.5));
-  }
+.content p {
+  font-size: clamp(14px, 3vw, 16px);
+  color: var(--color-text-light);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
 }
 
-#start-screen p,
-#gameover-screen p {
-  font-size: clamp(14px, 3vw, 18px);
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-}
-
-#start-screen button,
-#gameover-screen button {
-  margin-top: 30px;
-  padding: 15px 50px;
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 5px;
-  color: #0a0a15;
-  background: linear-gradient(135deg, #00ffff, #00ff88);
+.content button {
+  margin-top: 25px;
+  padding: 14px 50px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  background: var(--color-accent);
   border: none;
-  border-radius: 50px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   pointer-events: all;
-  font-family: inherit;
+  font-family: 'Playfair Display', serif;
 }
 
-#start-screen button:hover,
-#gameover-screen button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+.content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(242, 83, 70, 0.35);
 }
 
-#start-screen button:active,
-#gameover-screen button:active {
-  transform: scale(0.98);
+.content button:active {
+  transform: translateY(0);
 }
 
 .controls {
-  margin-top: 20px;
-  font-size: 14px !important;
-  color: rgba(255, 255, 255, 0.4) !important;
+  margin-top: 25px;
+  font-size: 12px !important;
+  color: var(--color-text-light) !important;
+  opacity: 0.7;
 }
 
 /* Game Over specific */
-#gameover-screen p span {
-  color: #00ffff;
-  font-weight: bold;
+#gameover-screen .content p span {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+/* Instructions at bottom */
+#instructions {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#instructions.visible {
+  opacity: 1;
+}
+
+#instructions .blue {
+  color: var(--color-energy);
+}
+
+#instructions .red {
+  color: var(--color-accent);
 }
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {
+  #header {
+    top: 20px;
+  }
+  
+  #header.playing {
+    top: 10px;
+    transform: translateX(-50%) scale(0.6);
+  }
+  
   #score-panel {
-    gap: 20px;
+    top: 100px;
+    gap: 25px;
   }
   
   .stat .label {
     font-size: 10px;
   }
   
-  .stat span:not(.label) {
-    font-size: 20px;
+  .stat .circle {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .stat #distance {
+    font-size: 22px;
   }
   
   #energy-bar {
-    width: 200px;
-    height: 10px;
-    bottom: 20px;
+    width: 60px;
+    height: 5px;
   }
   
-  #start-screen button,
-  #gameover-screen button {
-    padding: 12px 40px;
-    font-size: 16px;
+  .content {
+    padding: 30px 40px;
+    margin: 0 20px;
   }
+  
+  .content button {
+    padding: 12px 40px;
+    font-size: 13px;
+  }
+}
+
+/* Subtle animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.content {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Prevent text selection */
+#ui {
+  user-select: none;
+  -webkit-user-select: none;
 }
