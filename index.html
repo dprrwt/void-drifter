@@ -2,16 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="description" content="Void Drifter - A cosmic 3D endless runner through the void. Built with Three.js" />
-    <meta name="theme-color" content="#0a0a1a" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Void Drifter | Cosmic Endless Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#050510" />
+    <meta name="description" content="SINGULARITY — Fall into infinity. A Friday Original." />
+    <title>SINGULARITY</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23ffeaa7'/></svg>" />
   </head>
   <body>
     <div id="app"></div>
+    
+    <div id="ui">
+      <div id="title-screen">
+        <h1>Singularity</h1>
+        <p>Fall into infinity. Collect memories before they're lost.<br>Touch to move. Avoid the crimson entropy.</p>
+        <button id="start-btn">Begin</button>
+      </div>
+      
+      <div id="end-screen">
+        <h2>Released</h2>
+        <div class="stats"></div>
+        <button id="restart-btn">Drift Again</button>
+      </div>
+      
+      <div id="depth-indicator">depth 0%</div>
+    </div>
+    
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

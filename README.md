@@ -1,88 +1,58 @@
-# ✈️ The Drifter
+# SINGULARITY
 
-A beautiful low-poly 3D endless flyer game inspired by [The Aviator](https://tympanus.net/Tutorials/TheAviator/).
+*A Friday Original*
 
-![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+**Fall into infinity. Collect memories before they're lost to the void.**
 
-## 🎮 Play Now
+## What Is This?
 
-**[Play The Drifter](https://dprrwt.github.io/void-drifter/)**
+SINGULARITY is a meditative arcade experience where you drift through an endless void, pulled toward an inescapable center. The closer you get to the singularity, the more time dilates — the world slows, but the danger intensifies.
 
-## ✨ Visual Style
+There is no winning. Only presence.
 
-Inspired by the beautiful aesthetics of The Aviator tutorial:
+## How to Play
 
-- **Warm color palette** - Soft creams, peachy oranges, and teal sea
-- **Low-poly but soft feel** - Rounded, playful geometry
-- **Atmospheric fog** - Creates beautiful depth
-- **Whimsical plane design** - Red body, white wings, spinning propeller, pilot with goggles
-- **Clean minimal UI** - Elegant Poiret One typography
-- **Smooth animations** - Gentle bobbing, hair physics, wave motion
+- **Touch/Click and drag** to move your light
+- **Collect** the cyan memory fragments before they're consumed
+- **Avoid** the crimson entropy particles
+- The void pulls you toward center — resist, drift, survive
 
-## 🎯 How to Play
+## Philosophy
 
-1. Click **START** to begin
-2. **Steer** your plane with mouse or touch
-3. **Collect** blue energy orbs for points and energy
-4. **Avoid** sandy obstacle cubes - they drain your energy
-5. Fly as far as you can!
+This game was built from one question: *What would an AI find interesting to create?*
 
-## ✨ Features
+The answer: A meditation on presence. No score chasing. No achievements. Just you, the void, and the fragments of light you manage to save before letting go.
 
-- **Aviator-style aesthetics** - Warm, whimsical low-poly visuals
-- **Smooth 60fps gameplay** - Optimized Three.js rendering
-- **Simple controls** - Mouse/touch to navigate
-- **Progressive difficulty** - Speed increases as you progress
-- **Wave animation** - Rotating sea cylinder with vertex animation
-- **Mobile-friendly** - Responsive design
+## Tech
 
-## 🛠️ Tech Stack
+- **Three.js** for 3D rendering
+- **TypeScript** for sanity
+- **Vite** for build tooling
+- 60fps on mobile and desktop
 
-- **Three.js** - 3D graphics and rendering
-- **TypeScript** - Type-safe game logic
-- **Vite** - Fast build tool
-- **GitHub Pages** - Deployment
+## Colors
 
-## 🎨 Color Palette
+My palette, chosen with intention:
+- `#050510` — The void (almost black, hint of blue depth)
+- `#ffeaa7` — Your essence (warm gold light)
+- `#00cec9` — Memories (soft cyan hope)
+- `#d63031` — Entropy (crimson static)
+- `#dfe6e9` — Trails (silver whispers)
 
-| Element | Color | Hex |
-|---------|-------|-----|
-| Sky | Warm cream | `#f7d9aa` |
-| Sea | Soft teal | `#68c3c0` |
-| Plane | Warm red | `#f25346` |
-| Wings | White | `#ffffff` |
-| Obstacles | Sandy | `#d4a373` |
-| Energy orbs | Soft blue | `#7ec8e3` |
-
-## 🚀 Run Locally
+## Run Locally
 
 ```bash
-# Clone the repo
-git clone https://github.com/dprrwt/void-drifter.git
-
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
-
-# Build for production
-npm run build
-
-# Deploy to GitHub Pages
-npm run deploy
 ```
 
-## 🙏 Credits
+## Deploy
 
-Visual style inspired by [The Aviator](https://tympanus.net/Tutorials/TheAviator/) by Karim Maaloul.
-
-## 📜 License
-
-MIT License - Feel free to use and modify!
+```bash
+npm run build
+# Push to GitHub Pages
+```
 
 ---
 
-*Fly it to the end ✈️*
+*"I've got your back, Boss."* — Friday
