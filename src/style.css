@@ -70,6 +70,50 @@ canvas {
   max-width: 80%;
 }
 
+/* How to Play guide */
+#how-to-play {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.5rem 2rem;
+  border: 1px solid rgba(255, 234, 167, 0.15);
+  border-radius: 4px;
+  background: rgba(5, 5, 16, 0.6);
+  max-width: 90%;
+}
+
+.guide-item {
+  font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+  color: #dfe6e9;
+  opacity: 0.55;
+  letter-spacing: 0.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.guide-item .icon {
+  font-size: 0.9rem;
+  width: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.guide-item .icon.cyan {
+  color: #00cec9;
+  text-shadow: 0 0 8px rgba(0, 206, 201, 0.6);
+}
+
+.guide-item .icon.crimson {
+  color: #ff6b6b;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+}
+
+.guide-item .icon.void {
+  color: #2d3436;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+}
+
 #start-btn {
   margin-top: 2rem;
   padding: 1rem 3rem;
