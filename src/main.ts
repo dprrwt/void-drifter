@@ -2,8 +2,8 @@ import './style.css';
 import * as THREE from 'three';
 
 // ============================================
-// VOID DRIFTER - Aviator-Style Visual Overhaul
-// Inspired by The Aviator (tympanus.net)
+// VOID DRIFTER - Cosmic Space Theme
+// UNIQUE design - NOT an Aviator clone!
 // ============================================
 
 // Game State
@@ -20,63 +20,79 @@ let energy = 100;
 let gameSpeed = 1;
 let highScore = parseInt(localStorage.getItem('voidDrifterHighScore') || '0');
 
-// Aviator-inspired Color Palette
+// VOID DRIFTER Color Palette - Cosmic Space Theme
 const Colors = {
-  sky: 0xf7d9aa,           // Warm cream sky
-  skyHorizon: 0xf9e5c9,    // Lighter horizon
-  sun: 0xffede1,           // Soft sun glow
+  // Background gradients
+  spaceDeep: 0x0a0a1a,       // Deep space black-blue
+  spaceMid: 0x1a1a3a,        // Subtle purple
   
-  sea: 0x68c3c0,           // Soft teal
-  seaLight: 0x84d4d1,      // Light teal highlights
+  // Cosmic energy
+  nebula: 0x4a1a6b,          // Deep purple nebula
+  nebulaGlow: 0x8844aa,      // Purple glow
   
-  cloud: 0xd8d0d1,         // Soft gray-pink clouds
-  cloudLight: 0xffffff,    // Cloud highlights
-  cloudDark: 0xb5a9ab,     // Cloud shadows
+  // Cyan/Teal accent energy
+  energy: 0x00ffff,          // Bright cyan
+  energyGlow: 0x44ffff,      // Light cyan
+  energyDark: 0x00aaaa,      // Dark teal
   
-  plane: {
-    body: 0xf25346,        // Warm red
-    bodyDark: 0xd44131,    // Darker red
-    engine: 0x59332e,      // Brown
-    propeller: 0x23190f,   // Dark brown
-    blade: 0x23190f,       // Blade color
-    cockpit: 0xf5986e,     // Peach
-    wing: 0xffffff,        // White wings
+  // Ship - sleek metallic with cyan accents
+  ship: {
+    body: 0x2a2a4a,          // Dark metallic purple
+    bodyLight: 0x4a4a7a,     // Lighter accent
+    engine: 0x00ffff,        // Cyan engine glow
+    engineDark: 0x008888,    // Darker cyan
+    cockpit: 0x88ccff,       // Light blue cockpit
+    wing: 0x3a3a5a,          // Wing color
+    accent: 0xff00ff,        // Magenta accent
   },
   
+  // Pilot - space suit
   pilot: {
-    skin: 0xf5d6c6,        // Skin tone
-    hair: 0x59332e,        // Brown hair
-    glass: 0xffffff,       // Goggles
-    glassDark: 0x333333,   // Goggle frame
+    suit: 0x2a2a4a,          // Dark suit
+    helmet: 0x88ccff,        // Reflective visor
+    visorGlow: 0x00ffff,     // Cyan visor glow
   },
   
-  energy: {
-    orb: 0x7ec8e3,         // Soft blue energy
-    orbGlow: 0xaee1f9,     // Light blue glow
+  // Collectibles
+  orb: {
+    core: 0x00ffff,          // Cyan core
+    glow: 0x88ffff,          // Light glow
+    outer: 0x44aaff,         // Blue outer
   },
   
-  obstacle: {
-    rock: 0xd4a373,        // Sandy rock
-    rockDark: 0xbc8f5e,    // Darker rock
-    rockLight: 0xe5c9a8,   // Light rock
+  // Obstacles - space debris/asteroids
+  asteroid: {
+    dark: 0x2a1a3a,          // Dark purple rock
+    mid: 0x4a2a5a,           // Mid purple
+    light: 0x6a4a7a,         // Light purple accent
+    crystal: 0xff44ff,       // Magenta crystal
   },
   
+  // Particles and effects
+  particle: {
+    star: 0xffffff,
+    trail: 0x00ffff,
+    burst: 0xff44ff,
+  },
+  
+  // UI
   ui: {
-    text: 0x594034,        // Brown text
-    accent: 0xf25346,      // Red accent
-    energy: 0x68c3c0,      // Teal energy bar
+    text: 0xccccff,          // Light purple-white
+    accent: 0x00ffff,        // Cyan
+    warning: 0xff4444,       // Red warning
+    energyBar: 0x00ffff,     // Cyan bar
   }
 };
 
 // Three.js Setup
 const scene = new THREE.Scene();
 
-// Soft fog for atmosphere
-scene.fog = new THREE.Fog(Colors.sky, 40, 100);
-scene.background = new THREE.Color(Colors.sky);
+// Deep space fog for depth
+scene.fog = new THREE.FogExp2(Colors.spaceDeep, 0.012);
+scene.background = new THREE.Color(Colors.spaceDeep);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 10, 30);
+camera.position.set(0, 8, 25);
 camera.lookAt(0, 5, 0);
 
 const renderer = new THREE.WebGLRenderer({ 
@@ -88,49 +104,114 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.5;
 document.querySelector<HTMLDivElement>('#app')!.appendChild(renderer.domElement);
 
 // ============================================
-// SOFT LIGHTING (Aviator-style)
+// COSMIC LIGHTING
 // ============================================
-const hemisphereLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 0.9);
-scene.add(hemisphereLight);
-
-const ambientLight = new THREE.AmbientLight(0xfff4e6, 0.5);
+// Ambient space light (very dim)
+const ambientLight = new THREE.AmbientLight(0x1a1a3a, 0.4);
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xfff4e6, 1.2);
-sunLight.position.set(100, 150, 100);
-sunLight.castShadow = true;
-sunLight.shadow.camera.left = -50;
-sunLight.shadow.camera.right = 50;
-sunLight.shadow.camera.top = 50;
-sunLight.shadow.camera.bottom = -50;
-sunLight.shadow.camera.near = 1;
-sunLight.shadow.camera.far = 400;
-sunLight.shadow.mapSize.width = 2048;
-sunLight.shadow.mapSize.height = 2048;
-sunLight.shadow.bias = -0.0001;
-scene.add(sunLight);
+// Main cyan light (like a nearby star)
+const mainLight = new THREE.DirectionalLight(0x44aaff, 1.0);
+mainLight.position.set(50, 80, 50);
+mainLight.castShadow = true;
+mainLight.shadow.camera.left = -50;
+mainLight.shadow.camera.right = 50;
+mainLight.shadow.camera.top = 50;
+mainLight.shadow.camera.bottom = -50;
+mainLight.shadow.mapSize.width = 2048;
+mainLight.shadow.mapSize.height = 2048;
+scene.add(mainLight);
 
-// Warm fill light
-const fillLight = new THREE.DirectionalLight(0xf7d9aa, 0.4);
-fillLight.position.set(-100, 50, -100);
-scene.add(fillLight);
+// Purple accent light from below
+const accentLight = new THREE.DirectionalLight(0x8844aa, 0.6);
+accentLight.position.set(-30, -20, 30);
+scene.add(accentLight);
+
+// Rim light
+const rimLight = new THREE.DirectionalLight(0x00ffff, 0.4);
+rimLight.position.set(0, 50, -50);
+scene.add(rimLight);
 
 // ============================================
-// SEA (Rotating cylinder like Aviator)
+// STARFIELD (Unique background element)
 // ============================================
-class Sea {
+class Starfield {
+  particles: THREE.Points;
+  
+  constructor() {
+    const starCount = 2000;
+    const positions = new Float32Array(starCount * 3);
+    const colors = new Float32Array(starCount * 3);
+    const sizes = new Float32Array(starCount);
+    
+    for (let i = 0; i < starCount; i++) {
+      // Spread stars in a sphere around the scene
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      const r = 80 + Math.random() * 120;
+      
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.cos(phi);
+      positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      
+      // Random colors - mostly white with some blue/cyan tints
+      const colorChoice = Math.random();
+      if (colorChoice < 0.7) {
+        colors[i * 3] = 1;
+        colors[i * 3 + 1] = 1;
+        colors[i * 3 + 2] = 1;
+      } else if (colorChoice < 0.85) {
+        colors[i * 3] = 0.5;
+        colors[i * 3 + 1] = 0.8;
+        colors[i * 3 + 2] = 1;
+      } else {
+        colors[i * 3] = 0.8;
+        colors[i * 3 + 1] = 0.5;
+        colors[i * 3 + 2] = 1;
+      }
+      
+      sizes[i] = 0.2 + Math.random() * 0.5;
+    }
+    
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    
+    const material = new THREE.PointsMaterial({
+      size: 0.3,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true
+    });
+    
+    this.particles = new THREE.Points(geometry, material);
+  }
+  
+  update(time: number) {
+    // Slow rotation for subtle movement
+    this.particles.rotation.y = time * 0.01;
+    this.particles.rotation.x = Math.sin(time * 0.02) * 0.02;
+  }
+}
+
+// ============================================
+// COSMIC ENERGY FIELD (Replaces sea)
+// ============================================
+class CosmicField {
   mesh: THREE.Mesh;
   waves: { x: number; y: number; z: number; ang: number; amp: number; speed: number }[] = [];
   
   constructor() {
-    const geom = new THREE.CylinderGeometry(600, 600, 800, 40, 10);
-    geom.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+    const geom = new THREE.PlaneGeometry(200, 200, 50, 50);
+    geom.rotateX(-Math.PI / 2);
     
-    // Store wave info for each vertex
+    // Store wave data
     const positions = geom.attributes.position;
     for (let i = 0; i < positions.count; i++) {
       this.waves.push({
@@ -138,465 +219,268 @@ class Sea {
         y: positions.getY(i),
         z: positions.getZ(i),
         ang: Math.random() * Math.PI * 2,
-        amp: 2 + Math.random() * 5,
-        speed: 0.016 + Math.random() * 0.032
+        amp: 0.5 + Math.random() * 1.5,
+        speed: 0.02 + Math.random() * 0.03
       });
     }
     
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.sea,
+    const mat = new THREE.MeshStandardMaterial({
+      color: Colors.nebula,
+      emissive: Colors.nebulaGlow,
+      emissiveIntensity: 0.15,
       transparent: true,
-      opacity: 0.9,
-      flatShading: true,
-      shininess: 10
+      opacity: 0.6,
+      wireframe: false,
+      roughness: 0.8,
+      metalness: 0.2
     });
     
     this.mesh = new THREE.Mesh(geom, mat);
-    this.mesh.position.y = -600;
+    this.mesh.position.y = -8;
     this.mesh.receiveShadow = true;
   }
   
-  update() {
+  update(time: number) {
     const positions = this.mesh.geometry.attributes.position;
     
     for (let i = 0; i < this.waves.length; i++) {
       const wave = this.waves[i];
-      const x = wave.x + Math.cos(wave.ang) * wave.amp;
-      const y = wave.y + Math.sin(wave.ang) * wave.amp;
-      
-      positions.setX(i, x);
+      const y = Math.sin(wave.ang + time) * wave.amp;
       positions.setY(i, y);
-      
-      wave.ang += wave.speed;
+      wave.ang += wave.speed * gameSpeed;
     }
     
     positions.needsUpdate = true;
-    this.mesh.rotation.z += 0.003 * gameSpeed;
+    
+    // Pulse the emissive
+    const mat = this.mesh.material as THREE.MeshStandardMaterial;
+    mat.emissiveIntensity = 0.1 + Math.sin(time * 2) * 0.05;
   }
 }
 
 // ============================================
-// SKY (Gradient sphere)
+// FLOATING DEBRIS (Decorative background)
 // ============================================
-class Sky {
-  mesh: THREE.Mesh;
-  clouds: Cloud[] = [];
+class FloatingDebris {
+  meshes: THREE.Mesh[] = [];
   
   constructor() {
-    // Create a gradient sky dome
-    const skyGeo = new THREE.SphereGeometry(400, 32, 32);
-    
-    // Create gradient material
-    const vertexShader = `
-      varying vec3 vWorldPosition;
-      void main() {
-        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        vWorldPosition = worldPosition.xyz;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `;
-    
-    const fragmentShader = `
-      uniform vec3 topColor;
-      uniform vec3 bottomColor;
-      uniform float offset;
-      uniform float exponent;
-      varying vec3 vWorldPosition;
-      void main() {
-        float h = normalize(vWorldPosition + offset).y;
-        gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
-      }
-    `;
-    
-    const uniforms = {
-      topColor: { value: new THREE.Color(0xf7d9aa) },
-      bottomColor: { value: new THREE.Color(0xfef9f3) },
-      offset: { value: 33 },
-      exponent: { value: 0.4 }
-    };
-    
-    const skyMat = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      side: THREE.BackSide
-    });
-    
-    this.mesh = new THREE.Mesh(skyGeo, skyMat);
-    
-    // Add clouds
-    const nClouds = 25;
-    const stepAngle = Math.PI * 2 / nClouds;
-    
-    for (let i = 0; i < nClouds; i++) {
-      const cloud = new Cloud();
-      
-      const a = stepAngle * i;
-      const h = 750 + Math.random() * 200;
-      
-      cloud.mesh.position.y = Math.sin(a) * h;
-      cloud.mesh.position.x = Math.cos(a) * h;
-      cloud.mesh.position.z = -300 - Math.random() * 500;
-      cloud.mesh.rotation.z = a + Math.PI / 2;
-      
-      const s = 1 + Math.random() * 2;
-      cloud.mesh.scale.set(s, s, s);
-      
-      this.clouds.push(cloud);
-      this.mesh.add(cloud.mesh);
-    }
-  }
-  
-  update() {
-    for (const cloud of this.clouds) {
-      cloud.mesh.rotation.y += 0.001 * gameSpeed;
-    }
-  }
-}
-
-// ============================================
-// CLOUD (Puffy low-poly cloud)
-// ============================================
-class Cloud {
-  mesh: THREE.Group;
-  
-  constructor() {
-    this.mesh = new THREE.Group();
-    
-    const geom = new THREE.BoxGeometry(20, 20, 20);
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.cloud,
+    const count = 30;
+    const geom = new THREE.IcosahedronGeometry(1, 0);
+    const mat = new THREE.MeshStandardMaterial({
+      color: Colors.asteroid.dark,
+      roughness: 0.9,
+      metalness: 0.1,
       flatShading: true
     });
     
-    const nBlocks = 3 + Math.floor(Math.random() * 3);
-    
-    for (let i = 0; i < nBlocks; i++) {
-      const m = new THREE.Mesh(geom, mat);
+    for (let i = 0; i < count; i++) {
+      const mesh = new THREE.Mesh(geom, mat.clone());
       
-      m.position.x = i * 15;
-      m.position.y = Math.random() * 10;
-      m.position.z = Math.random() * 10;
-      m.rotation.z = Math.random() * Math.PI * 2;
-      m.rotation.y = Math.random() * Math.PI * 2;
+      // Random position in a cylinder around the play area
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 30 + Math.random() * 50;
       
-      const s = 0.1 + Math.random() * 0.9;
-      m.scale.set(s, s, s);
+      mesh.position.x = Math.cos(angle) * radius;
+      mesh.position.y = -5 + Math.random() * 20;
+      mesh.position.z = -60 + Math.random() * 80;
       
-      m.castShadow = true;
-      m.receiveShadow = true;
+      const scale = 0.5 + Math.random() * 2;
+      mesh.scale.set(scale, scale, scale);
       
-      this.mesh.add(m);
+      mesh.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      
+      // Random tint
+      const meshMat = mesh.material as THREE.MeshStandardMaterial;
+      const tint = Math.random();
+      if (tint > 0.7) {
+        meshMat.color.setHex(Colors.asteroid.mid);
+      } else if (tint > 0.9) {
+        meshMat.color.setHex(Colors.asteroid.light);
+      }
+      
+      this.meshes.push(mesh);
     }
+  }
+  
+  update(time: number) {
+    this.meshes.forEach((mesh, i) => {
+      mesh.rotation.x += 0.002 * (i % 3 + 1);
+      mesh.rotation.y += 0.003 * (i % 2 + 1);
+      mesh.position.y += Math.sin(time + i) * 0.005;
+    });
   }
 }
 
 // ============================================
-// AIRPLANE (Aviator-style playful design)
+// VOID SHIP (Unique spaceship design)
 // ============================================
-class Airplane {
+class VoidShip {
   mesh: THREE.Group;
-  propeller: THREE.Mesh;
-  pilot: THREE.Group;
+  engineGlow: THREE.Mesh;
+  leftWing: THREE.Mesh;
+  rightWing: THREE.Mesh;
+  trails: THREE.Points[] = [];
   
   targetX = 0;
   targetY = 0;
   currentX = 0;
   currentY = 5;
+  velocityX = 0;
+  velocityY = 0;
   
   constructor() {
     this.mesh = new THREE.Group();
     
-    // Cabin
-    const geomCabin = new THREE.BoxGeometry(80, 50, 50, 1, 1, 1);
-    const positions = geomCabin.attributes.position;
-    
-    // Make cabin more aerodynamic
-    // Front vertices (positive x)
-    positions.setY(4, positions.getY(4) - 10);
-    positions.setZ(4, positions.getZ(4) + 20);
-    positions.setY(5, positions.getY(5) - 10);
-    positions.setZ(5, positions.getZ(5) - 20);
-    positions.setY(6, positions.getY(6) + 30);
-    positions.setZ(6, positions.getZ(6) + 20);
-    positions.setY(7, positions.getY(7) + 30);
-    positions.setZ(7, positions.getZ(7) - 20);
-    
-    const matCabin = new THREE.MeshPhongMaterial({
-      color: Colors.plane.body,
-      flatShading: true
-    });
-    
-    const cabin = new THREE.Mesh(geomCabin, matCabin);
-    cabin.castShadow = true;
-    cabin.receiveShadow = true;
-    this.mesh.add(cabin);
-    
-    // Engine
-    const geomEngine = new THREE.BoxGeometry(20, 50, 50);
-    const matEngine = new THREE.MeshPhongMaterial({
-      color: Colors.plane.engine,
-      flatShading: true
-    });
-    const engine = new THREE.Mesh(geomEngine, matEngine);
-    engine.position.x = 50;
-    engine.castShadow = true;
-    engine.receiveShadow = true;
-    this.mesh.add(engine);
-    
-    // Tail plane
-    const geomTailPlane = new THREE.BoxGeometry(15, 20, 5);
-    const matTailPlane = new THREE.MeshPhongMaterial({
-      color: Colors.plane.body,
-      flatShading: true
-    });
-    const tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane);
-    tailPlane.position.set(-40, 20, 0);
-    tailPlane.castShadow = true;
-    tailPlane.receiveShadow = true;
-    this.mesh.add(tailPlane);
-    
-    // Tail wing
-    const geomSideWing = new THREE.BoxGeometry(40, 5, 150);
-    const matSideWing = new THREE.MeshPhongMaterial({
-      color: Colors.plane.wing,
-      flatShading: true
-    });
-    const tailWing = new THREE.Mesh(geomSideWing, matSideWing);
-    tailWing.position.set(-40, 5, 0);
-    tailWing.castShadow = true;
-    tailWing.receiveShadow = true;
-    this.mesh.add(tailWing);
-    
-    // Main wing
-    const geomMainWing = new THREE.BoxGeometry(30, 5, 200);
-    const mainWing = new THREE.Mesh(geomMainWing, matSideWing);
-    mainWing.position.set(0, 15, 0);
-    mainWing.castShadow = true;
-    mainWing.receiveShadow = true;
-    this.mesh.add(mainWing);
-    
-    // Propeller
-    const geomPropeller = new THREE.BoxGeometry(20, 10, 10);
-    const matPropeller = new THREE.MeshPhongMaterial({
-      color: Colors.plane.propeller,
-      flatShading: true
-    });
-    this.propeller = new THREE.Mesh(geomPropeller, matPropeller);
-    
-    // Propeller blades
-    const geomBlade = new THREE.BoxGeometry(1, 80, 10);
-    const matBlade = new THREE.MeshPhongMaterial({
-      color: Colors.plane.blade,
-      flatShading: true
-    });
-    const blade1 = new THREE.Mesh(geomBlade, matBlade);
-    blade1.position.set(8, 0, 0);
-    blade1.castShadow = true;
-    blade1.receiveShadow = true;
-    this.propeller.add(blade1);
-    
-    const blade2 = new THREE.Mesh(geomBlade, matBlade);
-    blade2.position.set(8, 0, 0);
-    blade2.rotation.x = Math.PI / 2;
-    blade2.castShadow = true;
-    blade2.receiveShadow = true;
-    this.propeller.add(blade2);
-    
-    this.propeller.position.set(60, 0, 0);
-    this.propeller.castShadow = true;
-    this.propeller.receiveShadow = true;
-    this.mesh.add(this.propeller);
-    
-    // Cockpit glass
-    const geomCockpit = new THREE.BoxGeometry(36, 30, 35);
-    const matCockpit = new THREE.MeshPhongMaterial({
-      color: Colors.plane.cockpit,
-      transparent: true,
-      opacity: 0.6,
-      flatShading: true
-    });
-    const cockpit = new THREE.Mesh(geomCockpit, matCockpit);
-    cockpit.position.set(-5, 27, 0);
-    cockpit.castShadow = true;
-    cockpit.receiveShadow = true;
-    this.mesh.add(cockpit);
-    
-    // Wheels
-    const wheelProtecGeom = new THREE.BoxGeometry(30, 15, 10);
-    const wheelProtecMat = new THREE.MeshPhongMaterial({
-      color: Colors.plane.body,
-      flatShading: true
-    });
-    const wheelProtecR = new THREE.Mesh(wheelProtecGeom, wheelProtecMat);
-    wheelProtecR.position.set(25, -20, 25);
-    this.mesh.add(wheelProtecR);
-    
-    const wheelProtecL = wheelProtecR.clone();
-    wheelProtecL.position.z = -25;
-    this.mesh.add(wheelProtecL);
-    
-    const wheelTireGeom = new THREE.BoxGeometry(24, 24, 8);
-    const wheelTireMat = new THREE.MeshPhongMaterial({
-      color: Colors.plane.engine,
-      flatShading: true
-    });
-    const wheelTireR = new THREE.Mesh(wheelTireGeom, wheelTireMat);
-    wheelTireR.position.set(25, -28, 25);
-    this.mesh.add(wheelTireR);
-    
-    const wheelTireL = wheelTireR.clone();
-    wheelTireL.position.z = -25;
-    this.mesh.add(wheelTireL);
-    
-    // Back wheel
-    const wheelTireB = new THREE.Mesh(wheelTireGeom, wheelTireMat);
-    wheelTireB.scale.set(0.5, 0.5, 0.5);
-    wheelTireB.position.set(-35, -10, 0);
-    this.mesh.add(wheelTireB);
-    
-    // Suspension
-    const suspensionGeom = new THREE.BoxGeometry(4, 20, 4);
-    const suspensionMat = new THREE.MeshPhongMaterial({
-      color: Colors.plane.body,
-      flatShading: true
-    });
-    const suspension = new THREE.Mesh(suspensionGeom, suspensionMat);
-    suspension.position.set(-35, -5, 0);
-    suspension.rotation.z = -0.3;
-    this.mesh.add(suspension);
-    
-    // Add pilot
-    this.pilot = this.createPilot();
-    this.pilot.position.set(-10, 27, 0);
-    this.pilot.scale.set(0.8, 0.8, 0.8);
-    this.mesh.add(this.pilot);
-    
-    // Scale down the plane
-    this.mesh.scale.set(0.04, 0.04, 0.04);
-    this.mesh.position.set(0, 5, 0);
-    this.mesh.rotation.y = Math.PI;
-    
-    this.mesh.castShadow = true;
-    this.mesh.receiveShadow = true;
-  }
-  
-  createPilot(): THREE.Group {
-    const pilot = new THREE.Group();
-    
-    // Body
-    const bodyGeom = new THREE.BoxGeometry(15, 15, 15);
-    const bodyMat = new THREE.MeshPhongMaterial({
-      color: Colors.plane.body,
+    // Main body - sleek triangular shape
+    const bodyGeom = new THREE.ConeGeometry(0.6, 2.5, 4);
+    bodyGeom.rotateX(Math.PI / 2);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: Colors.ship.body,
+      roughness: 0.3,
+      metalness: 0.8,
       flatShading: true
     });
     const body = new THREE.Mesh(bodyGeom, bodyMat);
-    body.position.set(2, -12, 0);
-    pilot.add(body);
+    body.castShadow = true;
+    this.mesh.add(body);
     
-    // Face
-    const faceGeom = new THREE.BoxGeometry(10, 10, 10);
-    const faceMat = new THREE.MeshPhongMaterial({
-      color: Colors.pilot.skin,
+    // Cockpit dome
+    const cockpitGeom = new THREE.SphereGeometry(0.35, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2);
+    const cockpitMat = new THREE.MeshStandardMaterial({
+      color: Colors.ship.cockpit,
+      roughness: 0.1,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.8
+    });
+    const cockpit = new THREE.Mesh(cockpitGeom, cockpitMat);
+    cockpit.position.set(0, 0.25, 0.3);
+    cockpit.rotation.x = -0.3;
+    this.mesh.add(cockpit);
+    
+    // Wings - swept back design
+    const wingGeom = new THREE.BoxGeometry(2.5, 0.05, 0.8);
+    const wingMat = new THREE.MeshStandardMaterial({
+      color: Colors.ship.wing,
+      roughness: 0.4,
+      metalness: 0.7,
       flatShading: true
     });
-    const face = new THREE.Mesh(faceGeom, faceMat);
-    pilot.add(face);
     
-    // Hair
-    const hairGeom = new THREE.BoxGeometry(4, 4, 4);
-    const hairMat = new THREE.MeshPhongMaterial({
-      color: Colors.pilot.hair,
-      flatShading: true
+    this.leftWing = new THREE.Mesh(wingGeom, wingMat);
+    this.leftWing.position.set(-0.8, 0, -0.3);
+    this.leftWing.rotation.y = 0.3;
+    this.leftWing.rotation.z = 0.1;
+    this.leftWing.castShadow = true;
+    this.mesh.add(this.leftWing);
+    
+    this.rightWing = new THREE.Mesh(wingGeom, wingMat);
+    this.rightWing.position.set(0.8, 0, -0.3);
+    this.rightWing.rotation.y = -0.3;
+    this.rightWing.rotation.z = -0.1;
+    this.rightWing.castShadow = true;
+    this.mesh.add(this.rightWing);
+    
+    // Wing tips - cyan glow accent
+    const tipGeom = new THREE.BoxGeometry(0.1, 0.1, 0.6);
+    const tipMat = new THREE.MeshStandardMaterial({
+      color: Colors.ship.engine,
+      emissive: Colors.ship.engine,
+      emissiveIntensity: 0.5,
+      roughness: 0.2,
+      metalness: 0.8
     });
-    const hairSideR = new THREE.Mesh(hairGeom, hairMat);
-    hairSideR.position.set(-3, 5, 6);
-    pilot.add(hairSideR);
     
-    const hairSideL = hairSideR.clone();
-    hairSideL.position.z = -6;
-    pilot.add(hairSideL);
+    const leftTip = new THREE.Mesh(tipGeom, tipMat);
+    leftTip.position.set(-1.9, 0, -0.3);
+    this.mesh.add(leftTip);
     
-    const hairBack = new THREE.Mesh(hairGeom, hairMat);
-    hairBack.position.set(-2, 5, 0);
-    hairBack.scale.set(1, 1, 2);
-    pilot.add(hairBack);
+    const rightTip = new THREE.Mesh(tipGeom, tipMat);
+    rightTip.position.set(1.9, 0, -0.3);
+    this.mesh.add(rightTip);
     
-    const hairTop = new THREE.Mesh(hairGeom, hairMat);
-    hairTop.position.set(-1, 8, 0);
-    hairTop.scale.set(1, 1, 2);
-    pilot.add(hairTop);
-    
-    // Goggles
-    const glassGeom = new THREE.BoxGeometry(5, 5, 5);
-    const glassMat = new THREE.MeshPhongMaterial({
-      color: Colors.pilot.glass,
-      flatShading: true
+    // Engine thruster
+    const engineGeom = new THREE.CylinderGeometry(0.25, 0.35, 0.5, 6);
+    engineGeom.rotateX(Math.PI / 2);
+    const engineMat = new THREE.MeshStandardMaterial({
+      color: Colors.ship.engineDark,
+      roughness: 0.5,
+      metalness: 0.6
     });
-    const glassR = new THREE.Mesh(glassGeom, glassMat);
-    glassR.position.set(6, 0, 3);
-    pilot.add(glassR);
+    const engine = new THREE.Mesh(engineGeom, engineMat);
+    engine.position.z = -1.2;
+    this.mesh.add(engine);
     
-    const glassL = glassR.clone();
-    glassL.position.z = -3;
-    pilot.add(glassL);
+    // Engine glow
+    const glowGeom = new THREE.SphereGeometry(0.3, 8, 8);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: Colors.ship.engine,
+      transparent: true,
+      opacity: 0.8
+    });
+    this.engineGlow = new THREE.Mesh(glowGeom, glowMat);
+    this.engineGlow.position.z = -1.4;
+    this.engineGlow.scale.z = 1.5;
+    this.mesh.add(this.engineGlow);
     
-    const glassFrame = new THREE.Mesh(new THREE.BoxGeometry(7, 5, 13), 
-      new THREE.MeshPhongMaterial({
-        color: Colors.pilot.glassDark,
-        flatShading: true
-      }));
-    glassFrame.position.set(3, 0, 0);
-    pilot.add(glassFrame);
+    // Engine point light
+    const engineLight = new THREE.PointLight(Colors.ship.engine, 1, 5);
+    engineLight.position.z = -1.5;
+    this.mesh.add(engineLight);
     
-    // Ear
-    const earGeom = new THREE.BoxGeometry(2, 3, 2);
-    const earR = new THREE.Mesh(earGeom, faceMat);
-    earR.position.set(0, 0, 6);
-    pilot.add(earR);
-    
-    const earL = earR.clone();
-    earL.position.z = -6;
-    pilot.add(earL);
-    
-    return pilot;
+    this.mesh.position.set(0, 5, 0);
+    this.mesh.castShadow = true;
   }
   
   update(inputX: number, inputY: number, time: number) {
-    // Smooth follow mouse
-    this.targetX = inputX * 10;
-    this.targetY = 5 + inputY * 5;
+    // FAST & SNAPPY movement - high responsiveness!
+    this.targetX = inputX * 14;
+    this.targetY = 5 + inputY * 7;
     
-    this.currentX += (this.targetX - this.currentX) * 0.08;
-    this.currentY += (this.targetY - this.currentY) * 0.08;
+    // Quick acceleration - much snappier than before!
+    const acceleration = 0.25; // Was 0.08 - now 3x faster!
+    const damping = 0.85;
+    
+    // Calculate velocity
+    this.velocityX += (this.targetX - this.currentX) * acceleration;
+    this.velocityY += (this.targetY - this.currentY) * acceleration;
+    
+    // Apply damping
+    this.velocityX *= damping;
+    this.velocityY *= damping;
+    
+    // Update position
+    this.currentX += this.velocityX;
+    this.currentY += this.velocityY;
     
     // Clamp position
-    this.currentX = Math.max(-12, Math.min(12, this.currentX));
-    this.currentY = Math.max(1, Math.min(12, this.currentY));
+    this.currentX = Math.max(-15, Math.min(15, this.currentX));
+    this.currentY = Math.max(1, Math.min(14, this.currentY));
     
     this.mesh.position.x = this.currentX;
     this.mesh.position.y = this.currentY;
     
-    // Gentle banking based on movement
-    this.mesh.rotation.z = (this.targetX - this.currentX) * 0.03;
-    this.mesh.rotation.x = (this.currentY - this.targetY) * 0.02;
+    // Dynamic banking - ship tilts based on velocity
+    this.mesh.rotation.z = -this.velocityX * 0.15;
+    this.mesh.rotation.x = -this.velocityY * 0.1;
     
-    // Subtle bobbing motion
-    this.mesh.position.y += Math.sin(time * 2) * 0.1;
+    // Wing flare during movement
+    const bankAngle = Math.abs(this.velocityX) * 0.05;
+    this.leftWing.rotation.z = 0.1 + bankAngle;
+    this.rightWing.rotation.z = -0.1 - bankAngle;
     
-    // Spin propeller
-    this.propeller.rotation.x += 0.3 + gameSpeed * 0.2;
+    // Engine glow pulsing
+    const glowIntensity = 0.8 + Math.sin(time * 15) * 0.2 + gameSpeed * 0.2;
+    this.engineGlow.scale.set(1 + Math.sin(time * 20) * 0.1, 1 + Math.sin(time * 20) * 0.1, 1.5 + gameSpeed * 0.3);
+    (this.engineGlow.material as THREE.MeshBasicMaterial).opacity = glowIntensity;
     
-    // Pilot hair animation
-    const hairParts = [
-      this.pilot.children[2],
-      this.pilot.children[3],
-      this.pilot.children[4],
-      this.pilot.children[5]
-    ];
-    hairParts.forEach((hair, i) => {
-      hair.scale.y = 0.75 + Math.cos(time * 10 + i) * 0.15;
-    });
+    // Subtle hover bob
+    this.mesh.position.y += Math.sin(time * 4) * 0.05;
   }
   
   getBoundingBox(): THREE.Box3 {
@@ -605,76 +489,113 @@ class Airplane {
 }
 
 // ============================================
-// FLOATING OBSTACLES (Soft cubes like Aviator)
+// SPACE OBSTACLES (Asteroids/debris)
 // ============================================
-class Obstacle {
+class SpaceObstacle {
   mesh: THREE.Group;
   speed: number;
   rotationSpeed: THREE.Vector3;
   passed = false;
+  crystals: THREE.Mesh[] = [];
   
   constructor() {
     this.mesh = new THREE.Group();
     
+    // Main asteroid body
     const size = 1 + Math.random() * 2;
-    const geom = new THREE.BoxGeometry(size, size, size);
+    const geom = new THREE.IcosahedronGeometry(size, 0);
     
-    const colorChoice = Math.random();
-    let color;
-    if (colorChoice < 0.33) {
-      color = Colors.obstacle.rock;
-    } else if (colorChoice < 0.66) {
-      color = Colors.obstacle.rockDark;
-    } else {
-      color = Colors.obstacle.rockLight;
+    // Distort vertices for irregular shape
+    const positions = geom.attributes.position;
+    for (let i = 0; i < positions.count; i++) {
+      const offset = 0.7 + Math.random() * 0.6;
+      positions.setX(i, positions.getX(i) * offset);
+      positions.setY(i, positions.getY(i) * offset);
+      positions.setZ(i, positions.getZ(i) * offset);
     }
+    geom.computeVertexNormals();
     
-    const mat = new THREE.MeshPhongMaterial({
-      color: color,
+    const mat = new THREE.MeshStandardMaterial({
+      color: Colors.asteroid.dark,
+      roughness: 0.9,
+      metalness: 0.1,
       flatShading: true
     });
     
-    // Create cluster of blocks
-    const nBlocks = 2 + Math.floor(Math.random() * 3);
-    for (let i = 0; i < nBlocks; i++) {
-      const block = new THREE.Mesh(geom, mat);
+    const asteroid = new THREE.Mesh(geom, mat);
+    asteroid.castShadow = true;
+    this.mesh.add(asteroid);
+    
+    // Add small detail rocks
+    const detailCount = 2 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < detailCount; i++) {
+      const detailGeom = new THREE.IcosahedronGeometry(size * 0.3, 0);
+      const detailMat = new THREE.MeshStandardMaterial({
+        color: Math.random() > 0.5 ? Colors.asteroid.mid : Colors.asteroid.light,
+        roughness: 0.9,
+        metalness: 0.1,
+        flatShading: true
+      });
       
-      block.position.x = Math.random() * size;
-      block.position.y = Math.random() * size;
-      block.position.z = Math.random() * size;
-      
-      block.rotation.x = Math.random() * Math.PI;
-      block.rotation.y = Math.random() * Math.PI;
-      
-      const s = 0.3 + Math.random() * 0.7;
-      block.scale.set(s, s, s);
-      
-      block.castShadow = true;
-      block.receiveShadow = true;
-      
-      this.mesh.add(block);
+      const detail = new THREE.Mesh(detailGeom, detailMat);
+      detail.position.set(
+        (Math.random() - 0.5) * size,
+        (Math.random() - 0.5) * size,
+        (Math.random() - 0.5) * size
+      );
+      detail.castShadow = true;
+      this.mesh.add(detail);
     }
     
-    // Random position ahead
-    this.mesh.position.x = (Math.random() - 0.5) * 25;
-    this.mesh.position.y = 2 + Math.random() * 10;
-    this.mesh.position.z = -80 - Math.random() * 40;
+    // Occasional glowing crystal
+    if (Math.random() > 0.6) {
+      const crystalGeom = new THREE.ConeGeometry(0.2, 0.8, 4);
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: Colors.asteroid.crystal,
+        emissive: Colors.asteroid.crystal,
+        emissiveIntensity: 0.5,
+        roughness: 0.2,
+        metalness: 0.8
+      });
+      
+      const crystal = new THREE.Mesh(crystalGeom, crystalMat);
+      crystal.position.set(
+        (Math.random() - 0.5) * size,
+        size * 0.5,
+        (Math.random() - 0.5) * size
+      );
+      crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      this.crystals.push(crystal);
+      this.mesh.add(crystal);
+    }
     
-    this.speed = 0.4 + Math.random() * 0.2;
+    // Position
+    this.mesh.position.x = (Math.random() - 0.5) * 28;
+    this.mesh.position.y = 2 + Math.random() * 12;
+    this.mesh.position.z = -70 - Math.random() * 30;
+    
+    // Speed - FASTER base speed
+    this.speed = 0.6 + Math.random() * 0.3;
     this.rotationSpeed = new THREE.Vector3(
-      (Math.random() - 0.5) * 0.02,
-      (Math.random() - 0.5) * 0.02,
-      (Math.random() - 0.5) * 0.01
+      (Math.random() - 0.5) * 0.03,
+      (Math.random() - 0.5) * 0.03,
+      (Math.random() - 0.5) * 0.02
     );
   }
   
-  update(): boolean {
+  update(time: number): boolean {
     this.mesh.position.z += this.speed * gameSpeed;
     this.mesh.rotation.x += this.rotationSpeed.x;
     this.mesh.rotation.y += this.rotationSpeed.y;
     this.mesh.rotation.z += this.rotationSpeed.z;
     
-    return this.mesh.position.z > 30;
+    // Pulse crystals
+    this.crystals.forEach(crystal => {
+      const mat = crystal.material as THREE.MeshStandardMaterial;
+      mat.emissiveIntensity = 0.3 + Math.sin(time * 5) * 0.2;
+    });
+    
+    return this.mesh.position.z > 25;
   }
   
   getBoundingBox(): THREE.Box3 {
@@ -693,63 +614,89 @@ class Obstacle {
 }
 
 // ============================================
-// ENERGY ORBS (Soft glowing collectibles)
+// ENERGY ORBS (Collectibles)
 // ============================================
 class EnergyOrb {
   mesh: THREE.Group;
   innerOrb: THREE.Mesh;
-  outerGlow: THREE.Mesh;
+  outerRings: THREE.Mesh[] = [];
   speed: number;
   collected = false;
   
   constructor() {
     this.mesh = new THREE.Group();
     
-    // Inner sphere
-    const innerGeom = new THREE.IcosahedronGeometry(0.5, 1);
-    const innerMat = new THREE.MeshPhongMaterial({
-      color: Colors.energy.orb,
-      emissive: Colors.energy.orb,
-      emissiveIntensity: 0.5,
-      flatShading: true,
-      transparent: true,
-      opacity: 0.9
+    // Core orb
+    const coreGeom = new THREE.IcosahedronGeometry(0.4, 2);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: Colors.orb.core,
+      emissive: Colors.orb.core,
+      emissiveIntensity: 0.8,
+      roughness: 0.2,
+      metalness: 0.8
     });
-    this.innerOrb = new THREE.Mesh(innerGeom, innerMat);
+    this.innerOrb = new THREE.Mesh(coreGeom, coreMat);
     this.mesh.add(this.innerOrb);
     
-    // Outer glow
-    const outerGeom = new THREE.SphereGeometry(1, 16, 16);
-    const outerMat = new THREE.MeshBasicMaterial({
-      color: Colors.energy.orbGlow,
+    // Rotating rings
+    for (let i = 0; i < 2; i++) {
+      const ringGeom = new THREE.TorusGeometry(0.7 + i * 0.2, 0.03, 8, 24);
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: Colors.orb.outer,
+        emissive: Colors.orb.glow,
+        emissiveIntensity: 0.4,
+        transparent: true,
+        opacity: 0.8
+      });
+      const ring = new THREE.Mesh(ringGeom, ringMat);
+      ring.rotation.x = Math.PI / 2 + i * 0.5;
+      ring.rotation.y = i * 0.3;
+      this.outerRings.push(ring);
+      this.mesh.add(ring);
+    }
+    
+    // Glow sphere
+    const glowGeom = new THREE.SphereGeometry(1, 16, 16);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: Colors.orb.glow,
       transparent: true,
-      opacity: 0.2
+      opacity: 0.15
     });
-    this.outerGlow = new THREE.Mesh(outerGeom, outerMat);
-    this.mesh.add(this.outerGlow);
+    const glow = new THREE.Mesh(glowGeom, glowMat);
+    this.mesh.add(glow);
+    
+    // Point light
+    const light = new THREE.PointLight(Colors.orb.core, 0.8, 6);
+    this.mesh.add(light);
     
     // Position
-    this.mesh.position.x = (Math.random() - 0.5) * 20;
-    this.mesh.position.y = 3 + Math.random() * 8;
-    this.mesh.position.z = -80 - Math.random() * 40;
+    this.mesh.position.x = (Math.random() - 0.5) * 24;
+    this.mesh.position.y = 3 + Math.random() * 10;
+    this.mesh.position.z = -70 - Math.random() * 30;
     
-    this.speed = 0.45;
+    this.speed = 0.55;
   }
   
   update(time: number): boolean {
     this.mesh.position.z += this.speed * gameSpeed;
     
-    // Rotate and pulse
-    this.innerOrb.rotation.x += 0.02;
-    this.innerOrb.rotation.y += 0.03;
+    // Rotate core and rings
+    this.innerOrb.rotation.x += 0.03;
+    this.innerOrb.rotation.y += 0.04;
     
-    const pulse = 1 + Math.sin(time * 5) * 0.1;
-    this.outerGlow.scale.set(pulse, pulse, pulse);
+    this.outerRings.forEach((ring, i) => {
+      ring.rotation.x += 0.02 * (i + 1);
+      ring.rotation.z += 0.015 * (i + 1);
+    });
     
-    // Gentle bob
-    this.mesh.position.y += Math.sin(time * 3 + this.mesh.position.x) * 0.02;
+    // Pulse
+    const pulse = 1 + Math.sin(time * 6) * 0.15;
+    this.innerOrb.scale.set(pulse, pulse, pulse);
     
-    return this.mesh.position.z > 30;
+    // Bob
+    this.mesh.position.y += Math.sin(time * 3.5 + this.mesh.position.x) * 0.025;
+    
+    return this.mesh.position.z > 25;
   }
   
   getBoundingBox(): THREE.Box3 {
@@ -758,22 +705,24 @@ class EnergyOrb {
   
   destroy() {
     scene.remove(this.mesh);
-    this.innerOrb.geometry.dispose();
-    (this.innerOrb.material as THREE.Material).dispose();
-    this.outerGlow.geometry.dispose();
-    (this.outerGlow.material as THREE.Material).dispose();
+    this.mesh.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        (child.material as THREE.Material).dispose();
+      }
+    });
   }
 }
 
 // ============================================
-// PARTICLE BURST (Collection/collision effect)
+// PARTICLE BURST EFFECT
 // ============================================
 class ParticleBurst {
   particles: THREE.Points;
   velocities: THREE.Vector3[] = [];
   life = 1;
   
-  constructor(position: THREE.Vector3, color: number, count = 15) {
+  constructor(position: THREE.Vector3, color: number, count = 20) {
     const positions = new Float32Array(count * 3);
     
     for (let i = 0; i < count; i++) {
@@ -782,9 +731,9 @@ class ParticleBurst {
       positions[i * 3 + 2] = position.z;
       
       this.velocities.push(new THREE.Vector3(
-        (Math.random() - 0.5) * 0.3,
-        (Math.random() - 0.5) * 0.3,
-        (Math.random() - 0.5) * 0.3
+        (Math.random() - 0.5) * 0.5,
+        (Math.random() - 0.5) * 0.5,
+        (Math.random() - 0.5) * 0.5
       ));
     }
     
@@ -793,7 +742,7 @@ class ParticleBurst {
     
     const material = new THREE.PointsMaterial({
       color: color,
-      size: 0.2,
+      size: 0.25,
       transparent: true,
       opacity: 1
     });
@@ -810,12 +759,11 @@ class ParticleBurst {
       positions.setY(i, positions.getY(i) + this.velocities[i].y);
       positions.setZ(i, positions.getZ(i) + this.velocities[i].z);
       
-      // Slow down
-      this.velocities[i].multiplyScalar(0.96);
+      this.velocities[i].multiplyScalar(0.94);
     }
     
     positions.needsUpdate = true;
-    this.life -= 0.03;
+    this.life -= 0.04;
     (this.particles.material as THREE.PointsMaterial).opacity = this.life;
     
     if (this.life <= 0) {
@@ -829,12 +777,59 @@ class ParticleBurst {
 }
 
 // ============================================
+// SPEED LINES (Motion effect)
+// ============================================
+class SpeedLines {
+  lines: THREE.Line[] = [];
+  
+  constructor() {
+    const lineCount = 60;
+    const material = new THREE.LineBasicMaterial({
+      color: 0x4444aa,
+      transparent: true,
+      opacity: 0.3
+    });
+    
+    for (let i = 0; i < lineCount; i++) {
+      const points = [
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, 0, -3)
+      ];
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geometry, material.clone());
+      
+      this.resetLine(line);
+      this.lines.push(line);
+    }
+  }
+  
+  resetLine(line: THREE.Line) {
+    line.position.x = (Math.random() - 0.5) * 40;
+    line.position.y = Math.random() * 20 - 5;
+    line.position.z = -50 - Math.random() * 30;
+  }
+  
+  update() {
+    this.lines.forEach(line => {
+      line.position.z += 1.5 * gameSpeed;
+      (line.material as THREE.LineBasicMaterial).opacity = 0.1 + gameSpeed * 0.15;
+      
+      if (line.position.z > 20) {
+        this.resetLine(line);
+      }
+    });
+  }
+}
+
+// ============================================
 // GAME OBJECTS
 // ============================================
-let sky: Sky;
-let sea: Sea;
-let airplane: Airplane;
-let obstacles: Obstacle[] = [];
+let starfield: Starfield;
+let cosmicField: CosmicField;
+let floatingDebris: FloatingDebris;
+let speedLines: SpeedLines;
+let ship: VoidShip;
+let obstacles: SpaceObstacle[] = [];
 let energyOrbs: EnergyOrb[] = [];
 let particles: ParticleBurst[] = [];
 
@@ -846,29 +841,29 @@ let touchY = 0;
 let isTouching = false;
 
 // ============================================
-// UI (Aviator-style clean and minimal)
+// UI - Cosmic Theme
 // ============================================
 const ui = document.createElement('div');
 ui.id = 'ui';
 ui.innerHTML = `
   <div id="header">
     <h1>
-      <span class="the">the</span>
-      <span class="title">Drifter</span>
+      <span class="void">VOID</span>
+      <span class="title">DRIFTER</span>
     </h1>
-    <p class="tagline">fly it to the end</p>
+    <p class="tagline">// drift through the cosmos //</p>
   </div>
   <div id="score-panel">
     <div class="stat">
-      <span class="label">level</span>
-      <span class="circle" id="level">1</span>
+      <span class="label">WARP</span>
+      <span class="value-box" id="level">1</span>
     </div>
     <div class="stat">
-      <span class="label">distance</span>
-      <span id="distance">000</span>
+      <span class="label">DISTANCE</span>
+      <span class="value" id="distance">000</span>
     </div>
     <div class="stat">
-      <span class="label">energy</span>
+      <span class="label">ENERGY</span>
       <div id="energy-bar">
         <div id="energy-fill"></div>
       </div>
@@ -876,19 +871,24 @@ ui.innerHTML = `
   </div>
   <div id="start-screen">
     <div class="content">
-      <h2>Ready to Drift?</h2>
-      <p>Collect the blue orbs</p>
-      <p>avoid the obstacles</p>
-      <button id="start-btn">START</button>
-      <p class="controls">Move mouse or touch to steer</p>
+      <div class="logo">
+        <span class="v">V</span><span class="o">O</span><span class="i">I</span><span class="d">D</span>
+      </div>
+      <h2>DRIFTER</h2>
+      <div class="divider"></div>
+      <p>Collect <span class="cyan">energy orbs</span></p>
+      <p>Avoid <span class="purple">asteroids</span></p>
+      <button id="start-btn">LAUNCH</button>
+      <p class="controls">// mouse or touch to steer //</p>
     </div>
   </div>
   <div id="gameover-screen" style="display: none;">
     <div class="content">
-      <h2>Flight Complete</h2>
-      <p>Distance: <span id="final-distance">0</span></p>
-      <p>Best: <span id="final-highscore">0</span></p>
-      <button id="restart-btn">TRY AGAIN</button>
+      <h2>DRIFT ENDED</h2>
+      <div class="divider"></div>
+      <p>Distance: <span class="cyan" id="final-distance">0</span></p>
+      <p>Best: <span class="purple" id="final-highscore">0</span></p>
+      <button id="restart-btn">RELAUNCH</button>
     </div>
   </div>
 `;
@@ -929,13 +929,21 @@ window.addEventListener('resize', onResize);
 // GAME FUNCTIONS
 // ============================================
 function init() {
-  // Create sky with clouds
-  sky = new Sky();
-  scene.add(sky.mesh);
+  // Create starfield
+  starfield = new Starfield();
+  scene.add(starfield.particles);
   
-  // Create sea
-  sea = new Sea();
-  scene.add(sea.mesh);
+  // Create cosmic energy field
+  cosmicField = new CosmicField();
+  scene.add(cosmicField.mesh);
+  
+  // Create floating debris (background)
+  floatingDebris = new FloatingDebris();
+  floatingDebris.meshes.forEach(mesh => scene.add(mesh));
+  
+  // Create speed lines
+  speedLines = new SpeedLines();
+  speedLines.lines.forEach(line => scene.add(line));
 }
 
 function startGame() {
@@ -958,12 +966,12 @@ function startGame() {
   energyOrbs = [];
   particles = [];
   
-  // Create airplane
-  if (airplane) {
-    scene.remove(airplane.mesh);
+  // Create ship
+  if (ship) {
+    scene.remove(ship.mesh);
   }
-  airplane = new Airplane();
-  scene.add(airplane.mesh);
+  ship = new VoidShip();
+  scene.add(ship.mesh);
   
   // UI updates
   document.getElementById('start-screen')!.style.display = 'none';
@@ -987,15 +995,15 @@ function gameOver() {
 }
 
 function spawnObstacle() {
-  if (obstacles.length < 12) {
-    const obstacle = new Obstacle();
+  if (obstacles.length < 15) {
+    const obstacle = new SpaceObstacle();
     scene.add(obstacle.mesh);
     obstacles.push(obstacle);
   }
 }
 
 function spawnEnergyOrb() {
-  if (energyOrbs.length < 4) {
+  if (energyOrbs.length < 5) {
     const orb = new EnergyOrb();
     scene.add(orb.mesh);
     energyOrbs.push(orb);
@@ -1003,21 +1011,25 @@ function spawnEnergyOrb() {
 }
 
 function checkCollisions() {
-  if (!airplane) return;
+  if (!ship) return;
   
-  const planeBox = airplane.getBoundingBox();
+  const shipBox = ship.getBoundingBox();
+  
+  // Shrink hitbox slightly for fairness
+  shipBox.min.addScalar(0.3);
+  shipBox.max.subScalar(0.3);
   
   // Check obstacle collisions
   for (const obstacle of obstacles) {
     const obstacleBox = obstacle.getBoundingBox();
-    if (planeBox.intersectsBox(obstacleBox)) {
-      energy -= 30;
-      particles.push(new ParticleBurst(obstacle.mesh.position.clone(), Colors.obstacle.rock));
+    if (shipBox.intersectsBox(obstacleBox)) {
+      energy -= 25;
+      particles.push(new ParticleBurst(obstacle.mesh.position.clone(), Colors.asteroid.crystal, 25));
       obstacle.destroy();
       obstacles = obstacles.filter(o => o !== obstacle);
       
-      // Camera shake effect
-      camera.position.x += (Math.random() - 0.5) * 0.5;
+      // Camera shake
+      camera.position.x += (Math.random() - 0.5) * 0.8;
       camera.position.y += (Math.random() - 0.5) * 0.5;
       
       if (energy <= 0) {
@@ -1029,10 +1041,10 @@ function checkCollisions() {
   // Check energy orb collisions
   for (const orb of energyOrbs) {
     const orbBox = orb.getBoundingBox();
-    if (planeBox.intersectsBox(orbBox)) {
+    if (shipBox.intersectsBox(orbBox)) {
       score += 100;
-      energy = Math.min(100, energy + 15);
-      particles.push(new ParticleBurst(orb.mesh.position.clone(), Colors.energy.orb, 20));
+      energy = Math.min(100, energy + 12);
+      particles.push(new ParticleBurst(orb.mesh.position.clone(), Colors.orb.core, 30));
       orb.destroy();
       energyOrbs = energyOrbs.filter(e => e !== orb);
     }
@@ -1040,20 +1052,20 @@ function checkCollisions() {
 }
 
 function updateUI() {
-  const level = Math.floor(distance / 1000) + 1;
+  const level = Math.floor(distance / 800) + 1;
   document.getElementById('level')!.textContent = level.toString();
   document.getElementById('distance')!.textContent = Math.floor(distance).toString().padStart(3, '0');
   
   const energyFill = document.getElementById('energy-fill')!;
   energyFill.style.width = `${energy}%`;
   
-  // Change energy bar color based on level
+  // Energy bar color based on amount
   if (energy > 50) {
-    energyFill.style.background = Colors.energy.orb.toString(16);
+    energyFill.style.background = 'linear-gradient(90deg, #00ffff, #44ffff)';
   } else if (energy > 25) {
-    energyFill.style.background = '#e8a87c';
+    energyFill.style.background = 'linear-gradient(90deg, #ff8844, #ffaa66)';
   } else {
-    energyFill.style.background = '#f25346';
+    energyFill.style.background = 'linear-gradient(90deg, #ff4444, #ff6666)';
   }
 }
 
@@ -1069,43 +1081,45 @@ function animate() {
   
   const time = clock.getElapsedTime();
   
-  // Update sky
-  sky?.update();
+  // Update background elements
+  starfield?.update(time);
+  cosmicField?.update(time);
+  floatingDebris?.update(time);
   
-  // Update sea
-  sea?.update();
-  
-  // Smooth camera reset after shake
-  camera.position.x += (0 - camera.position.x) * 0.1;
-  camera.position.y += (10 - camera.position.y) * 0.1;
+  // Smooth camera reset
+  camera.position.x += (0 - camera.position.x) * 0.15;
+  camera.position.y += (8 - camera.position.y) * 0.15;
   
   if (state === GameState.PLAYING) {
-    // Update airplane
+    // Update ship
     const inputX = isTouching ? touchX : mouseX;
     const inputY = isTouching ? touchY : mouseY;
-    airplane.update(inputX, inputY, time);
+    ship.update(inputX, inputY, time);
     
-    // Increase game speed gradually
-    gameSpeed = 1 + distance * 0.0001;
-    gameSpeed = Math.min(gameSpeed, 2.5);
+    // Speed lines update
+    speedLines?.update();
     
-    // Update distance
-    distance += gameSpeed * 0.5;
+    // Increase game speed - FASTER progression
+    gameSpeed = 1 + distance * 0.00015;
+    gameSpeed = Math.min(gameSpeed, 3.0);
     
-    // Spawn objects
-    if (time - lastObstacleSpawn > 0.8 / gameSpeed) {
+    // Update distance - FASTER scoring
+    distance += gameSpeed * 0.7;
+    
+    // Spawn objects - MORE FREQUENT
+    if (time - lastObstacleSpawn > 0.6 / gameSpeed) {
       spawnObstacle();
       lastObstacleSpawn = time;
     }
     
-    if (time - lastOrbSpawn > 2.5) {
+    if (time - lastOrbSpawn > 2.0) {
       spawnEnergyOrb();
       lastOrbSpawn = time;
     }
     
     // Update obstacles
     obstacles = obstacles.filter(obstacle => {
-      if (obstacle.update()) {
+      if (obstacle.update(time)) {
         obstacle.destroy();
         return false;
       }
@@ -1126,6 +1140,9 @@ function animate() {
     
     // Update UI
     updateUI();
+  } else {
+    // Idle animation - gentle speed line movement
+    speedLines?.update();
   }
   
   // Update particles
