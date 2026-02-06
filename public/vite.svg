@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff"/>
+      <stop offset="100%" style="stop-color:#ff00ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="45" fill="#0a0a15"/>
+  <!-- Spaceship body -->
+  <polygon points="50,15 35,70 50,60 65,70" fill="url(#gradient)"/>
+  <!-- Wings -->
+  <polygon points="35,70 20,75 35,55" fill="#0088aa"/>
+  <polygon points="65,70 80,75 65,55" fill="#0088aa"/>
+  <!-- Engine glow -->
+  <ellipse cx="50" cy="72" rx="8" ry="12" fill="#ff4400" opacity="0.8"/>
+  <!-- Stars -->
+  <circle cx="20" cy="25" r="2" fill="white" opacity="0.8"/>
+  <circle cx="80" cy="30" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="75" cy="85" r="1" fill="white" opacity="0.5"/>
+  <circle cx="25" cy="80" r="1.5" fill="white" opacity="0.7"/>
+</svg>

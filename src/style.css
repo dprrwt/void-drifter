@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  background: #0a0a15;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  color: white;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+/* UI Overlay */
+#ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Score Panel */
+#score-panel {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 40px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat .label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 3px;
+  margin-bottom: 5px;
+}
+
+.stat span:not(.label) {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Energy Bar */
+#energy-bar {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  max-width: 80%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#energy-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #00ff88, #00ffaa);
+  border-radius: 6px;
+  transition: width 0.3s, background 0.3s;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+/* Start Screen */
+#start-screen,
+#gameover-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(10, 10, 21, 0.8) 0%, rgba(10, 10, 21, 0.95) 100%);
+  pointer-events: all;
+}
+
+#start-screen h1,
+#gameover-screen h1 {
+  font-size: clamp(36px, 10vw, 72px);
+  font-weight: bold;
+  letter-spacing: 10px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+  }
+  to {
+    filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.5));
+  }
+}
+
+#start-screen p,
+#gameover-screen p {
+  font-size: clamp(14px, 3vw, 18px);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+#start-screen button,
+#gameover-screen button {
+  margin-top: 30px;
+  padding: 15px 50px;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  color: #0a0a15;
+  background: linear-gradient(135deg, #00ffff, #00ff88);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  pointer-events: all;
+  font-family: inherit;
+}
+
+#start-screen button:hover,
+#gameover-screen button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+}
+
+#start-screen button:active,
+#gameover-screen button:active {
+  transform: scale(0.98);
+}
+
+.controls {
+  margin-top: 20px;
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Game Over specific */
+#gameover-screen p span {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  #score-panel {
+    gap: 20px;
+  }
+  
+  .stat .label {
+    font-size: 10px;
+  }
+  
+  .stat span:not(.label) {
+    font-size: 20px;
+  }
+  
+  #energy-bar {
+    width: 200px;
+    height: 10px;
+    bottom: 20px;
+  }
+  
+  #start-screen button,
+  #gameover-screen button {
+    padding: 12px 40px;
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "void-drifter",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A low-poly 3D space endless runner game built with Three.js",
+  "author": "dprrwt",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "@types/three": "^0.182.0",
+    "three": "^0.182.0"
+  }
+}
